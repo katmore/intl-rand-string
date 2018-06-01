@@ -1,5 +1,5 @@
 # RandString
-single purpose PHP lib for producing random alpha-numeric strings
+generate internationalized random alpha-numeric strings
 
 ## Legal
 ### Copyright
