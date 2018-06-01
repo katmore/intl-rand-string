@@ -1,0 +1,22 @@
+{
+   "name": "katmore/rand-string",
+   "description" : "single purpose PHP lib for producing random alpha-numeric strings",
+   "homepage":"https://github.com/katmore/rand-string",
+    "autoload": {
+        "psr-4": {
+            "RandString\\": "src/RandString/"
+        }
+    },
+	"license": [
+       "MIT",
+       "GPL-3.0+"
+    ],
+    "require": {
+        "php" : ">=7.2.0",
+        "ext-mbstring": "*",
+      "voku/portable-utf8": "^5.0"     
+     },
+   "require-dev": {
+      "phpunit/phpunit": "^7"
+   }
+}
