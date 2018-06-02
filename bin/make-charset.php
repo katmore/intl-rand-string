@@ -2,28 +2,34 @@
 <?php
 exit((new class () {
    
-   const CHARSET_CLASS_VERSION = '0.0.2';
+   const CHARSET_CLASS_TEMPLATE_VERSION = '0.0.3';
    
-   const CHARSET_NAMESPACE = 'RandString/Charset';
+   const ROOT_NAMESPACE = 'IntlRandString';
+   const CHARSET_PARENT_SHORTNAME = 'Charset';
+   const CHARSET_PARENT_CLASS = self::ROOT_NAMESPACE.'/'.self::CHARSET_PARENT_SHORTNAME;
+   const CHARSET_NAMESPACE = self::ROOT_NAMESPACE.'/Charset';
    const CHARSET_CLASS_ROOT = __DIR__.'/../src/'.self::CHARSET_NAMESPACE;
    
    const ME_DESC = 'rand-string charset generator';
    const ME_NAME = 'make-charset.php';
-   const ME_USAGE = '[-hl] [CHARSET-NAME] [U-START] [U-LIMIT]';
+   const ME_USAGE = '[-h]|[CHARSET-NAME] [CODEPOINT-START] [CODEPOINT-LIMIT] [...[[CODEPOINT-START] [CODEPOINT-LIMIT]]]';
    const ME_HELP =<<<ME_HELP
-Mode Options:
-  -h: print a help message and exit
-  -l: list each available [ENITITY-TABLE] and exit
+options:
+  -h: Print a help message and exit.
+  --verbose: Print more details.
 
-Arguments:
+arguments:
   [CHARSET-NAME]
     Specify the new charset name.
     Creates the "Charset" class file in the "src/Randstring/Charset" directory.
-  [U-START]
-    Specify the first unicode point in the new charset range.
-  [U-LIMIT]
-    Specify one more than the last unicode unicode point in the new charset range. 
-
+  [CODEPOINT-START]
+    Specify a starting Unicode code point.
+    Typically expressed in Unicode format; i.e. "U+0400".
+    May also be expressed in decimal integer format; i.e. "1024".
+  [CODEPOINT-LIMIT]
+    Specify an ending Unicode code point.
+    Typically expressed in Unicode format; i.e. "U+0400".
+    May also be expressed in decimal integer format; i.e. "1024".
 ME_HELP;
    
    const ME_COPYRIGHT = 'Copyright (c) 2012-2018 Doug Bird. All Rights Reserved.';
@@ -42,13 +48,18 @@ ME_HELP;
       echo "  ".static::ME_NAME." ".static::ME_USAGE.PHP_EOL;
    }
    
+   private static $isVerboseOn = false;
+   
    const PRINT_FLAG_PLAIN = 0;
    const PRINT_FLAG_NAME_PREFIX = 1;
+   const PRINT_FLAG_VERBOSE_ONLY = 2;
    private static function printError(string $message,int $flags=self::PRINT_FLAG_NAME_PREFIX) : void {
+      if (($flags & static::PRINT_FLAG_VERBOSE_ONLY) && !static::$isVerboseOn) return;
       if ($flags & static::PRINT_FLAG_NAME_PREFIX) $message = static::ME_NAME.": $message";
       fwrite(STDERR,$message.PHP_EOL);
    }
    private static function printLine(string $message,int $flags=self::PRINT_FLAG_PLAIN) : void {
+      if (($flags & static::PRINT_FLAG_VERBOSE_ONLY) && !static::$isVerboseOn) return;
       if ($flags & static::PRINT_FLAG_NAME_PREFIX) $message = static::ME_NAME.": $message";
       echo $message.PHP_EOL;
    }
@@ -60,18 +71,22 @@ ME_HELP;
    
    public function __construct() {
       
+      
+      $optind = 1;
+      
+      if (false!==($opt = getopt("",['verbose'],$optind)) && count($opt)) {
+         static::$isVerboseOn = true;
+      }
+      
+      $argOffset = $optind-1;
+      $argv = [];
+      $argc = 0;
       $arg1 = null;
-      $arg2 = null;
-      $arg3 = null;
       if (!empty($_SERVER) && !empty($_SERVER['argv'])) {
-         if (!empty($_SERVER['argv'][1])) {
-            $arg1 = $_SERVER['argv'][1];
-         }
-         if (!empty($_SERVER['argv'][2])) {
-            $arg2 = $_SERVER['argv'][2];
-         }
-         if (!empty($_SERVER['argv'][3])) {
-            $arg3 = $_SERVER['argv'][3];
+         $argv = array_slice($_SERVER['argv'], $argOffset);
+         $argc = count($argv);
+         if (!empty($argv[1])) {
+            $arg1 = $argv[1];
          }
       }
       
@@ -121,58 +136,83 @@ ME_HELP;
       /*
        * enforce sanity of arguments
        */
+      $missingArg = false;
       $invalidArg = false;
       $charsetName = $arg1;
       
       if (empty($charsetName)) {
          static::printError("missing [CHARSET-NAME]");
-         $invalidArg = true;
+         $missingArg = $invalidArg = true;
       } else {
          if (!ctype_alpha(substr($charsetName,0,1))) {
             static::printError("invalid [CHARSET-NAME], must start with a letter");
             $invalidArg = true;
-         } else if (!ctype_alnum($charsetName)) {
-            static::printError("invalid [CHARSET-NAME], must be alphanumeric");
+         } else if (!ctype_alnum(str_replace(['-','_'],'',$charsetName))) {
+            static::printError("invalid [CHARSET-NAME], may only include letters, numbers, and the dash '-' and underscore '_' chars");
             $invalidArg = true;
          }
       }
       
-      $uStart = $arg2;
-      if (empty($uStart)) {
-         static::printError("missing [U-START]");
-         $invalidArg = true;
-      } else {
-         if (((substr($uStart,0,2)==='0x') || (substr($uStart,0,2)==='U+')) && (ctype_xdigit(substr($uStart,2)))) {
-            $uStart = (int) hexdec(substr($uStart,2));
-         } else if (ctype_xdigit($uStart)) {
-            $uStart = (int) hexdec($uStart);
-         } else if (ctype_digit($uStart)) {
-            $uStart = (int) $uStart;
-         } else {
-            $invalidArg = true;
-            static::printError("invalid [U-START], must be integer");
-         }
-      }
+      $rangeSetInput = [];
       
-      $uLimit = $arg3;
-      if (empty($uLimit)) {
-         static::printError("missing [U-LIMIT]");
-         $invalidArg = true;
-      } else {
-         if (((substr($uLimit,0,2)==='0x') || (substr($uLimit,0,2)==='U+')) && (ctype_xdigit(substr($uLimit,2)))) {
-            $uLimit = (int) hexdec(substr($uLimit,2));
-         } else if (ctype_xdigit($uLimit)) {
-            $uLimit = (int) hexdec($uLimit);
-         } else if (ctype_digit($uLimit)) {
-            $uLimit = (int) $uLimit;
-         } else {
-            $invalidArg = true;
-            static::printError("invalid [U-START], must be integer");
+      $uStart = null;
+      for($i=2;$i<$argc;$i++) {
+         if ($uStart === null) {
+            $uStart = $argv[$i];
+            continue;
+         }
+         if ($uStart !== null) {
+            $rangeSetInput[$uStart] = $argv[$i];
+            $uStart = null;
          }
       }
+      if ($uStart !== null) {
+         static::printError("missing [CODEPOINT-LIMIT] for $uStart");
+         $missingArg = $invalidArg = true;
+      }
+      unset($uStart);
+      
+      $rangeSet = [];
+      foreach($rangeSetInput as $uStartInput=>$uEndInput) {
+         $uStartInput = trim($uStartInput);
+         $uEndInput = trim($uEndInput);
+         if (((substr($uStartInput,0,2)==='0x') || (substr($uStartInput,0,2)==='U+')) && (ctype_xdigit(substr($uStartInput,2)))) {
+            $uStart =(int) hexdec(substr($uStartInput,2));
+         } else if ((substr($uStartInput,0,1)==='x') && (ctype_xdigit(substr($uStartInput,1)))) {
+            $uStart =(int) hexdec(substr($uStartInput,1));
+         } else if (ctype_xdigit($uStartInput)) {
+            $uStart =(int) hexdec($uStartInput);
+         } else if (ctype_digit($uStartInput)) {
+            $uStart =(int) $uStartInput;
+         } else {
+            $invalidArg = true;
+            static::printError("invalid [CODEPOINT-START], must be Unicode code point expression");
+            static::printError("invalid [CODEPOINT-START] input: $uStartInput",static::PRINT_FLAG_VERBOSE_ONLY);
+         }
+         if (((substr($uEndInput,0,2)==='0x') || (substr($uEndInput,0,2)==='U+')) && (ctype_xdigit(substr($uEndInput,2)))) {
+            $uEnd = (int) hexdec(substr($uEndInput,2));
+         } else if ((substr($uEndInput,0,1)==='x') && (ctype_xdigit(substr($uEndInput,1)))) {
+            $uEnd = (int) hexdec(substr($uEndInput,1));
+         } else if (ctype_xdigit($uEndInput)) {
+            $uEnd = (int) hexdec($uEndInput);
+         } else if (ctype_digit($uEndInput)) {
+            $uEnd = (int) $uEndInput;
+         } else {
+            $invalidArg = true;
+            static::printError("invalid [CODEPOINT-LIMIT], must be Unicode code point expression");
+            static::printError("invalid [CODEPOINT-LIMIT] input: $uEndInput",static::PRINT_FLAG_VERBOSE_ONLY);
+         }
+         if (!$invalidArg) {
+            $rangeSet[$uStart] = $uEnd;
+         }
+      }
+      unset($uStartInput);
+      unset($uEndInput);
+      
+      //var_dump($rangeSet);
       
       if ($invalidArg) {
-         static::printUsage();
+         $missingArg && static::printUsage();
          return $this->exitStatus = 2;
       }
       
@@ -197,13 +237,6 @@ ME_HELP;
        * resolve the Charset class file path
        */
       $classPath = static::CHARSET_CLASS_ROOT."/$charsetShortName.php";
-      
-      /*
-       * enforce that Charset class file does not already exist
-       */
-      if (is_file($classPath)) {
-         static::printError("a corresponding class file already exists for the [CHARSET-NAME] '$charsetName'; hint, try ".'"rm '.$classPath.'" to delete the existing class file and try again');
-      }
       
       /*
        * create temp file for writing Charset class defintion
@@ -237,37 +270,60 @@ ME_HELP;
       
       $upper = [];
       $lower = [];
-      //
-      // Cyrillic: 0x0410,0x0450
-      //
-      IntlChar::enumCharNames($uStart,$uLimit,function($codepoint , $nameChoice , $name ) use (&$upper,&$lower)
-      {
-         static::printLine( "$codepoint: $name");
-         if (IntlChar::isalpha($codepoint)) {
-            if (IntlChar::isupper($codepoint)) {
+      $digit = [];
+      
+      $codepointRange = [];
+      foreach($rangeSet as $uStart=>$uEnd) {
+         $codepointRange []= "U+".sprintf("%04X",$uStart)." to U+".sprintf("%04X",$uEnd-1);
+         IntlChar::enumCharNames($uStart,$uEnd,function($codepoint , $nameChoice , $name ) use (&$upper,&$lower,&$digit)
+         {
+            static::printLine( "$codepoint: $name",static::PRINT_FLAG_VERBOSE_ONLY);
+            
+            if (IntlChar::isalpha($codepoint) && IntlChar::isupper($codepoint)) {
                $upper[] = IntlChar::chr($codepoint);
-               static::printLine("--added upper char--");
+               static::printLine("--added upper char--",static::PRINT_FLAG_VERBOSE_ONLY);
                return;
-            }
-            if (IntlChar::islower($codepoint)) {
+            } 
+            
+            if (IntlChar::isalpha($codepoint) && IntlChar::islower($codepoint)) {
                $lower[] = IntlChar::chr($codepoint);
-               static::printLine("--added lower char--");
+               static::printLine("--added lower char--",static::PRINT_FLAG_VERBOSE_ONLY);
                return;
             }
-         } else {
-            static::printLine("--ignored char--");
-         }
-      });
+            
+            if (IntlChar::isdigit($codepoint)) {
+               $digit[] = IntlChar::chr($codepoint);
+               static::printLine("--added digit char--",static::PRINT_FLAG_VERBOSE_ONLY);
+               return;
+            }
+            
+            static::printLine("--ignored char--",static::PRINT_FLAG_VERBOSE_ONLY);
+         });
+      }
+      unset($uStart);
+      unset($uEnd);
       
       if (false===file_put_contents($tmpClassFile,
-            "<?php\n//\n//\n// -- GENERATED BY katmore/rand-string/bin/".static::ME_NAME."\n// -- Charset class v".static::CHARSET_CLASS_VERSION. "\n//\n//\n".
+            "<?php\n".
+            "/* $charsetShortName Charset class - Generated by katmore/rand-string/bin/".static::ME_NAME."\n".
+            " * - Template: ".static::CHARSET_CLASS_TEMPLATE_VERSION. "\n".
+            " * - Codepoints: ".implode(", ",$codepointRange)."\n".
+            " * - Upper-Letters etag: ".md5(json_encode($upper))."\n".
+            " * - Lower-Letters etag: ".md5(json_encode($lower))."\n".
+            " * - Digits etag: ".md5(json_encode($digit))."\n".
+            " */\n".
             "namespace ".str_replace("/","\\",static::CHARSET_NAMESPACE).";\n".
             "\n".
-            "class $charsetShortName {\n".
+            "use ".str_replace("/","\\",static::CHARSET_PARENT_CLASS).";\n".
+            "\n".
+            "class $charsetShortName extends ".str_replace("/","\\",static::CHARSET_PARENT_SHORTNAME)." {\n".
             "\n".
             "   const UPPER_LETTERS = [\n      '".implode("',\n      '",$upper)."',\n   ];\n\n".
             "   const LOWER_LETTERS = [\n      '".implode("',\n      '",$lower)."',\n   ];\n\n".
-            "   const LETTERS = [\n      '".implode("',\n      '",array_merge($upper,$lower))."',\n   ];\n\n".
+            "   const DIGITS = [\n      '".implode("',\n      '",$digit)."',\n   ];\n\n".
+            "   public static function enumUpperLetters() : array { return static::UPPER_LETTERS; }\n".
+            "   public static function enumLowerLetters() : array { return static::LOWER_LETTERS; }\n".
+            "   public static function enumDigits() : array { return static::DIGITS; }\n".
             "}\n"
             )) 
       {
