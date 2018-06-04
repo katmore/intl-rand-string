@@ -12,11 +12,10 @@ exit((new class () {
    
    const ME_DESC = 'intl-rand-string charset generator';
    const ME_NAME = 'make-charset.php';
-   const ME_USAGE = '[-hl]|[CHARSET-NAME] [CODEPOINT-START] [CODEPOINT-LIMIT] [...[[CODEPOINT-START] [CODEPOINT-LIMIT]]]';
+   const ME_USAGE = '[-h]|[CHARSET-NAME] [CODEPOINT-START] [CODEPOINT-LIMIT] [...[[CODEPOINT-START] [CODEPOINT-LIMIT]]]';
    const ME_HELP =<<<ME_HELP
 options:
   -h: Print a help message and exit.
-  -l: Print a list of all existing charset names and exit.
   --verbose: Print more details.
 
 arguments:
@@ -72,7 +71,6 @@ ME_HELP;
    
    public function __construct() {
       
-      
       $optind = 1;
       
       if (false!==($opt = getopt("",['verbose'],$optind)) && count($opt)) {
@@ -94,43 +92,15 @@ ME_HELP;
       /*
        * apply help mode
        *   if the "-h, -u, --help, or --usage" option is indicated
-       *   if first argument is "usage" or "help" 
+       *   if first argument is "usage" or "help"
        */
       if (
-         ($arg1=='usage') ||
-         ($arg1=='help') || 
-         (false!==($opt = getopt("hu",['help','usage'])) && count($opt))
-      ) {
+            ($arg1=='usage') ||
+            ($arg1=='help') ||
+            (false!==($opt = getopt("hu",['help','usage'])) && count($opt))
+            )
+      {
          static::printHelp();
-         return;
-      }
-      
-      /*
-       * apply list mode
-       *   if the "-l, or --list" option is indicated
-       *   if first argument is "list" 
-       */
-      if (
-         ($arg1=='list') ||
-         (false!==($opt = getopt("l",['list',])) && count($opt))
-      ) {
-         if (false===($dirF = scandir(static::CHARSET_CLASS_ROOT))) {
-            static::printError('cannot read "charset class root" directory ('.static::CHARSET_CLASS_ROOT.')');
-            return $this->exitStatus = 1;
-         }
-         static::printError('printing each available [CHARSET-NAME]...',static::PRINT_FLAG_PLAIN);
-         static::printError('',static::PRINT_FLAG_PLAIN);
-         $i=0;
-         foreach($dirF as $f) {
-            $path = static::CHARSET_CLASS_ROOT."/$f";
-            if (is_file($path)) {
-               static::printLine(pathinfo($f,PATHINFO_FILENAME));
-               $i++;
-            }
-         }
-         unset($f);
-         static::printError('',static::PRINT_FLAG_PLAIN);
-         static::printError("$i total [CHARSET-NAME] available",static::PRINT_FLAG_PLAIN);
          return;
       }
       
@@ -140,6 +110,18 @@ ME_HELP;
       $missingArg = false;
       $invalidArg = false;
       $charsetName = $arg1;
+      
+      if (!empty($_SERVER) && !empty($_SERVER['argv'])) {
+         $allowedOpt = ['--verbose'];
+         foreach($_SERVER['argv'] as $a=>$v) {
+            if ((substr($v,0,1)=='-') && !in_array($v,$allowedOpt)) {
+               $invalidArg = true;
+               static::printError("unrecognized option: $v");
+            }
+         }
+         unset($a);
+         unset($v);
+      }
       
       if (empty($charsetName)) {
          static::printError("missing [CHARSET-NAME]");
