@@ -7,20 +7,32 @@ namespace IntlRandString;
  */
 
 abstract class Charset {
-   
+   /**
+    * Enumerates the charset's upper-case letter characters.
+    * @return string[] array containing each lower-case letter character
+    */
    abstract static public function enumUpperLetters() : array;
+   /**
+    * Enumerates the charset's lower-case letter characters.
+    * @return string[] array containing each lower-case letter character
+    */
    abstract static public function enumLowerLetters() : array;
+   /**
+    * Enumerates the charset's digit numeral characters.
+    * @return string[] array containing each digit numeral character
+    */
    abstract static public function enumDigits() : array;
    
    /**
+    * Generates a random string
     * 
     * @param int $length number of characters in random string
     * 
-    * @throws \IntlRandString\InvalidLength
+    * @throws \IntlRandString\InvalidLength length must be greater than 0
     */
    final public function randomString(int $length) : string {
       if ($length<1) {
-         throw new InvalidLength("must be greater than 0");
+         throw new InvalidLength;
       }
       $charsetCeil = count($this->charset)-1;
       $string = "";
@@ -38,15 +50,27 @@ abstract class Charset {
     * @var array
     */
    private $charset = [];
-   final public function __construct(int $flags=self::FLAG_UPPER_LETTERS | self::FLAG_LOWER_LETTERS | self::FLAG_DIGITS) {
-      if ($flags & static::FLAG_UPPER_LETTERS) {
+   /**
+    * @param int $charset_flags:  Specify potential characters that are included in generated random strings. 
+    * Upper-case letters, lower-case letters, and digit numeral characters are included by default. 
+    * <ul>
+    *    <li><b>\IntlRandString\Charset::FLAG_UPPER_LETTERS</b> include upper-case letter characters</li>
+    *    <li><b>\IntlRandString\Charset::FLAG_UPPER_LETTERS</b> include lower-case letter characters</li>
+    *    <li><b>\IntlRandString\Charset::FLAG_UPPER_LETTERS</b> include digit numeral characters</li>
+    * </ul>
+    */
+   final public function __construct(int $charset_flags=self::FLAG_UPPER_LETTERS | self::FLAG_LOWER_LETTERS | self::FLAG_DIGITS) {
+      if ($charset_flags & static::FLAG_UPPER_LETTERS) {
          $this->charset = array_merge($this->charset,static::enumUpperLetters());
       }
-      if ($flags & static::FLAG_LOWER_LETTERS) {
+      if ($charset_flags & static::FLAG_LOWER_LETTERS) {
          $this->charset = array_merge($this->charset,static::enumLowerLetters());
       }
-      if ($flags & static::FLAG_DIGITS) {
+      if ($charset_flags & static::FLAG_DIGITS) {
          $this->charset = array_merge($this->charset,static::enumDigits());
+      }
+      if (!count($this->charset)) {
+         throw new InvalidCharsetFlags;
       }
    }
 
