@@ -76,25 +76,42 @@ Uí64DSYjWóQr
 The following utility scripts facilitate development of character sets:
  * [make-charset.php](#make-charsetphp-dev-utility)
  * [make-all-charsets.sh](#make-all-charsetssh-dev-utility)
-
-### make-charset.php dev utility
-The [bin/make-charset.php](./bin/make-charset.php) command-line developer utility script creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. Invoke it with the `--help` flag for usage details. After creating a character set, [perform all unit tests](#unit-tests) to ensure conformity.
-
-```sh
-bin/make-charset.php --help
-```
-
-### make-all-charsets.sh dev utility
-The [bin/make-all-charsets.sh](./bin/make-all-charsets.php) command-line developer utility script contains the Unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). After (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
-
-```sh
-bin/make-all-charsets.sh
-```
-
+ 
 ### unit tests
 The unit tests specified by [`phpunit.xml`](./phpunit.xml) check the basic sanity and entropy of generated random strings for each character set.
 ```sh
 ./vendor/bin/phpunit
+```
+
+### make-charset.php dev utility
+The **bin/make-charset.php** command-line developer utility script creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. Invoke it with the `--help` flag for usage details. After creating a character set, [perform all unit tests](#unit-tests) to ensure conformity.
+
+```sh
+$ bin/make-charset.php --help
+```
+
+### make-all-charsets.sh dev utility
+The **bin/make-all-charsets.sh** command-line developer utility script contains the Unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). After (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
+
+```sh
+$ bin/make-all-charsets.sh
+```
+
+The *make-all-charsets.sh* dev utility is a wrapper which invokes the *make-charset.php* script multiple times; creating a separate Charset class defintion file each time. Therefore, the Unicode character ranges are for the charsets are ultimately defined in  [bin/make-all-charsets.sh](./bin/make-all-charsets.php). Therefore, by editing the [bin/make-all-charsets.sh](./bin/make-all-charsets.php) source file, character sets can be permanently added or modified.
+
+For example, the "German" character set is defined in *make-all-charsets.sh* as follows:
+```sh
+#
+# German Charset
+#
+CHARSET_LETTERS=
+CHARSET_LETTERS="$CHARSET_LETTERS U+00E4 U+00E5 U+00F6 U+00F7 U+00FC U+00FD" #diaresis a,o,u
+CHARSET_LETTERS="$CHARSET_LETTERS U+00C4 U+00C5 U+00D6 U+00D7 U+00DC U+00DD" #diaresis A,O,U
+CHARSET_LETTERS="$CHARSET_LETTERS U+00DF U+00E0 U+1E9E U+1E9F" #sharp s,S
+make_charset german\
+   $LATIN_NUMBERS\
+   $BASIC_LATIN_LETTERS\
+   $CHARSET_LETTERS
 ```
 
 ## Legal
