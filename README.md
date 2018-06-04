@@ -80,7 +80,7 @@ The following utility scripts facilitate development of character sets:
 ### unit tests
 The unit tests specified by [`phpunit.xml`](./phpunit.xml) check the basic sanity and entropy of generated random strings for each character set.
 ```sh
-./vendor/bin/phpunit
+$ vendor/bin/phpunit
 ```
 
 ### make-charset.php dev utility
