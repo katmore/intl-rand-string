@@ -9,7 +9,7 @@ use composer to add **IntlRandString** to your PHP project:
 composer require katmore/intl-rand-string
 ```
 
-## Character sets
+## Usage
 A random string can be generated with the following character sets:
  * [Cyrillic](#cyrillic-charset)
  * [English](#english-charset)
