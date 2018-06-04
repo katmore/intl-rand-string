@@ -85,7 +85,7 @@ bin/make-charset.php --help
 ```
 
 ### make-all-charsets.sh dev utility
-The [bin/make-all-charsets.sh](./bin/make-all-charsets.php) command-line developer utility script contains the unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). After (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
+The [bin/make-all-charsets.sh](./bin/make-all-charsets.php) command-line developer utility script contains the Unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). After (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
 
 ```sh
 bin/make-all-charsets.sh
