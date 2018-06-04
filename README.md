@@ -84,22 +84,23 @@ The unit tests specified by [`phpunit.xml`](./phpunit.xml) check the basic sanit
 ```
 
 ### make-charset.php dev utility
-The **bin/make-charset.php** command-line developer utility script creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. Invoke it with the `--help` flag for usage details. After creating a character set, [perform all unit tests](#unit-tests) to ensure conformity.
+The **`bin/make-charset.php`** command-line developer utility script creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. After creating a character set, [perform all unit tests](#unit-tests) to ensure conformity.
 
+Specifying the `--help` option will display usage details.
 ```sh
 $ bin/make-charset.php --help
 ```
 
 ### make-all-charsets.sh dev utility
-The **bin/make-all-charsets.sh** command-line developer utility script contains the Unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). After (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
+The **`bin/make-all-charsets.sh`** command-line developer utility script contains the Unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). 
 
 ```sh
 $ bin/make-all-charsets.sh
 ```
 
-The *make-all-charsets.sh* dev utility is a wrapper which invokes the *make-charset.php* script multiple times; creating a separate Charset class defintion file each time. Therefore, the Unicode character ranges are for the charsets are ultimately defined in  [bin/make-all-charsets.sh](./bin/make-all-charsets.php). Therefore, by editing the [bin/make-all-charsets.sh](./bin/make-all-charsets.php) source file, character sets can be permanently added or modified.
+The Unicode character ranges are for the charsets are ultimately defined in [bin/make-all-charsets.sh](./bin/make-all-charsets.sh). Therefore, by modifying the [make-all-charsets.sh](./bin/make-all-charsets.sh) source file, character sets can be permanently added or modified. After modifying the source and invoking to (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
 
-For example, the "German" character set is defined in *make-all-charsets.sh* as follows:
+For example, the ["German" character set](./src/IntlRandString/Charset/German.php) is defined in [*make-all-charsets.sh*](./bin/make-all-charsets.sh#L82-L92) as follows:
 ```sh
 #
 # German Charset
