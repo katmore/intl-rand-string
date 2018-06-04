@@ -1,5 +1,5 @@
 #!/bin/sh
-# generates all Charset class files
+# Purpose: generates all intl-rand-string Charset class files
 # - uses 'make-charset.php'
 #
 # @author D. Bird <retran@gmail.com> 
@@ -14,13 +14,35 @@ a="/$0"; a=${a%/*}; a=${a:-.}; a=${a#/}/; ME_DIR=$(cd "$a"; pwd)
 # resolve path to 'make-charset.php'
 #
 MAKE_CHARSET_BIN=$ME_DIR/make-charset.php
+help_mode() {
+   echo "generate all intl-rand-string charsets utility"
+   echo "Copyright (c) 2012-2018 Doug Bird. All Rights Reserved."
+   echo ""
+   echo "Purpose: generates all intl-rand-string Charset class files"
+   echo ""
+   echo "usage:"
+   echo "  $ME_NAME [-h][--verbose]";
+   echo ""
+   echo "options:"
+   echo "  -h: Print a help message and exit."
+   echo "  --verbose: Print more details."
+   exit 0
+}
 #
-# determine 'verbose' option
+# parse options
 #
 VERBOSE_OPT=
-while getopts -: arg; do { case $arg in -)
-   case $OPTARG in verbose) VERBOSE_OPT=--verbose;;
-esac ;; esac } done
+while getopts :?hu-: arg; do { case $arg in
+   h|u) help_mode;; 
+   -) case $OPTARG in
+      verbose) VERBOSE_OPT=--verbose;;
+      help|usage) help_mode;;
+      *) >&2 echo "$ME_NAME: unrecognized option --$OPTARG"; exit 2;;
+   esac ;;
+   *) >&2 echo "$ME_NAME: unrecognized option -$OPTARG"; exit 2;;
+esac } done
+shift $((OPTIND-1)) # remove parsed options and args from $@ list
+[ -z "$@" ] || { >&2 echo "$ME_NAME: one or more unrecognized positional arguments"; exit 2; }  
 #
 # make-charset.php wrapper
 #

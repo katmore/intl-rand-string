@@ -10,7 +10,7 @@ exit((new class () {
    const CHARSET_NAMESPACE = self::ROOT_NAMESPACE.'/Charset';
    const CHARSET_CLASS_ROOT = __DIR__.'/../src/'.self::CHARSET_NAMESPACE;
    
-   const ME_DESC = 'rand-string charset generator';
+   const ME_DESC = 'intl-rand-string charset generator';
    const ME_NAME = 'make-charset.php';
    const ME_USAGE = '[-h]|[CHARSET-NAME] [CODEPOINT-START] [CODEPOINT-LIMIT] [...[[CODEPOINT-START] [CODEPOINT-LIMIT]]]';
    const ME_HELP =<<<ME_HELP
@@ -21,7 +21,7 @@ options:
 arguments:
   [CHARSET-NAME]
     Specify the new charset name.
-    Creates the "Charset" class file in the "src/Randstring/Charset" directory.
+    Creates the "Charset" class file in the "src/IntlRandString/Charset" directory.
   [CODEPOINT-START]
     Specify a starting Unicode code point.
     Typically expressed in Unicode format; i.e. "U+0400".
