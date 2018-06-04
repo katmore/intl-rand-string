@@ -12,10 +12,11 @@ exit((new class () {
    
    const ME_DESC = 'intl-rand-string charset generator';
    const ME_NAME = 'make-charset.php';
-   const ME_USAGE = '[-h]|[CHARSET-NAME] [CODEPOINT-START] [CODEPOINT-LIMIT] [...[[CODEPOINT-START] [CODEPOINT-LIMIT]]]';
+   const ME_USAGE = '[-hl]|[CHARSET-NAME] [CODEPOINT-START] [CODEPOINT-LIMIT] [...[[CODEPOINT-START] [CODEPOINT-LIMIT]]]';
    const ME_HELP =<<<ME_HELP
 options:
   -h: Print a help message and exit.
+  -l: Print a list of all existing charset names and exit.
   --verbose: Print more details.
 
 arguments:
@@ -113,15 +114,15 @@ ME_HELP;
          ($arg1=='list') ||
          (false!==($opt = getopt("l",['list',])) && count($opt))
       ) {
-         if (false===($dirF = scandir(static::ENTITY_TABLE_ROOT))) {
-            static::printError('cannot read "entity-tables" directory ('.static::ENTITY_TABLE_ROOT.')');
+         if (false===($dirF = scandir(static::CHARSET_CLASS_ROOT))) {
+            static::printError('cannot read "charset class root" directory ('.static::CHARSET_CLASS_ROOT.')');
             return $this->exitStatus = 1;
          }
          static::printError('printing each available [CHARSET-NAME]...',static::PRINT_FLAG_PLAIN);
          static::printError('',static::PRINT_FLAG_PLAIN);
          $i=0;
          foreach($dirF as $f) {
-            $path = static::ENTITY_TABLE_ROOT."/$f";
+            $path = static::CHARSET_CLASS_ROOT."/$f";
             if (is_file($path)) {
                static::printLine(pathinfo($f,PATHINFO_FILENAME));
                $i++;
