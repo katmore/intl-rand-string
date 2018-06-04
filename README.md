@@ -64,7 +64,7 @@ DMFPZNusSJTO
 ### Spanish Charset
 Example, using the **Spanish** Charset to generate a random string:
 ```php
-$randString = new IntlRandString\Charset\Italian();
+$randString = new IntlRandString\Charset\Spanish();
 echo $randString->randomString(12);
 ```
 The above example should output a random string that includes only latin characters and latin digits as used in Spanish, such as follows:
