@@ -14,7 +14,7 @@
 	   <ini name="memory_limit" value="-1" />
 	</php>
     <testsuites>
-        <testsuite name="MicroEncode Unit Test Suite">
+        <testsuite name="IntlRandString Unit Test Suite">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
     </testsuites>
