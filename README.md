@@ -78,13 +78,19 @@ The following utility scripts facilitate development of character sets:
  * [make-all-charsets.sh](#make-all-charsetssh-dev-utility)
 
 ### make-charset.php dev utility
-The [bin/make-charset.php] is a command-line developer utility script that creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. Use the `--help` flag for usage details.
+The [bin/make-charset.php] is a command-line developer utility script that creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. Use the `--help` flag for usage details. After creating a character set, [perform all unit tests](#unit-tests) to ensure conformity.
 ```sh
 bin/make-charset.php --help
 ```
 
 ### make-all-charsets.sh dev utility
-The [bin/make-all-charsets.sh] is a command-line developer utility script that contains the unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset).
+The [bin/make-all-charsets.sh] is a command-line developer utility script that contains the unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset). After generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
+
+### unit tests
+The unit tests specified by [`phpunit.xml`](./phpunit.xml) check the basic sanity and entropy of generated random strings for each character set.
+```sh
+./vendor/bin/phpunit
+```
 
 ## Legal
 ### Copyright
