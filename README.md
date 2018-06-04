@@ -98,7 +98,7 @@ The **`bin/make-all-charsets.sh`** command-line developer utility script contain
 $ bin/make-all-charsets.sh
 ```
 
-The Unicode character ranges for the *Charsets* are ultimately defined in [bin/make-all-charsets.sh](./bin/make-all-charsets.sh). Therefore, by modifying the [make-all-charsets.sh](./bin/make-all-charsets.sh) source file, character sets can be permanently added or modified. After modifying the source and invoking to (re-)generating character sets, [perform all unit tests](#unit-tests) to ensure conformity.
+The Unicode character ranges for the *Charsets* are ultimately defined in [bin/make-all-charsets.sh](./bin/make-all-charsets.sh). Therefore, by modifying the [make-all-charsets.sh](./bin/make-all-charsets.sh) source file, character sets can be permanently added or modified. After modifying the source and invoking to (re-)generate character sets, [perform all unit tests](#unit-tests) to ensure conformity.
 
 For example, the ["German" character set](./src/IntlRandString/Charset/German.php) is defined in [*make-all-charsets.sh*](./bin/make-all-charsets.sh#L82-L92) as follows:
 ```sh
