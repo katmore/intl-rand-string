@@ -11,11 +11,11 @@ composer require katmore/intl-rand-string
 
 ## Character sets
 A random string can be generated with the following character sets:
- * [Cyrillic](#)
- * [English](#)
- * [German](#)
- * [Italian](#)
- * [Spanish](#)
+ * [Cyrillic](#cyrillic-charset)
+ * [English](#english-charset)
+ * [German](#german-charset)
+ * [Italian](#italian-charset)
+ * [Spanish](#spanish-charset)
 
 ### Cyrillic Charset
 Example, using the **Cyrillic** Charset to generate a random string:
@@ -74,8 +74,8 @@ Uí64DSYjWóQr
 
 ## Development
 The following utility scripts facilitate development of character sets:
- * [make-charset.php](#)
- * [make-all-charsets.sh](#)
+ * [make-charset.php](#make-charsetphp-dev-utility)
+ * [make-all-charsets.sh](#make-all-charsetssh-dev-utility)
 
 ### make-charset.php dev utility
 The [bin/make-charset.php] is a command-line developer utility script that creates a character set class defintion PHP source file in the `src/IntlRandString/Charset` directory. Use the `--help` flag for usage details.
@@ -83,7 +83,7 @@ The [bin/make-charset.php] is a command-line developer utility script that creat
 bin/make-charset.php --help
 ```
 
-### make-all-charsets.sh
+### make-all-charsets.sh dev utility
 The [bin/make-all-charsets.sh] is a command-line developer utility script that contains the unicode start and end points for all [*Charset* class defintions](#character-sets). Invoking it will (re-)generate all [character set defintion source files](./src/IntlRandString/Charset).
 
 ## Legal
