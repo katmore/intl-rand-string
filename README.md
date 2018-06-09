@@ -1,15 +1,14 @@
 # IntlRandString
 generate internationalized random alpha-numeric strings
 
-The **IntlRandString** package is a PHP project that facilitates generating random strings in multiple internationalized character sets. A typical use-case is generating random passwords in a targeted "language", i.e. using characters familiar to a language rather than simply using only english latin characters, as is typical. For similar reasons, it could also prove ideal in other use-cases, such as: password reset validation codes, coupon or promotional codes, etc.
+The **IntlRandString** package facilitates generating random strings in multiple internationalized character sets. A typical use-case is generating random passwords in a targeted "language", i.e. using characters familiar to a language rather than simply using only english latin characters, as is typical. For similar reasons, it could also prove ideal in other use-cases, such as: password reset validation codes, coupon or promotional codes, etc.
 
-## Installation
+## Usage in a PHP Project
 use composer to add **IntlRandString** to your PHP project:
 ```sh
 composer require katmore/intl-rand-string
 ```
 
-## Usage
 A random string can be generated with the following character sets:
  * [Cyrillic](#cyrillic-charset)
  * [English](#english-charset)
