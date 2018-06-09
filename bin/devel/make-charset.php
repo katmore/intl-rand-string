@@ -8,7 +8,7 @@ exit((new class () {
    const CHARSET_PARENT_SHORTNAME = 'Charset';
    const CHARSET_PARENT_CLASS = self::ROOT_NAMESPACE.'/'.self::CHARSET_PARENT_SHORTNAME;
    const CHARSET_NAMESPACE = self::ROOT_NAMESPACE.'/Charset';
-   const CHARSET_CLASS_ROOT = __DIR__.'/../src/'.self::CHARSET_NAMESPACE;
+   const CHARSET_CLASS_ROOT = __DIR__.'/../../src/'.self::CHARSET_NAMESPACE;
    
    const ME_DESC = 'intl-rand-string charset generator';
    const ME_NAME = 'make-charset.php';

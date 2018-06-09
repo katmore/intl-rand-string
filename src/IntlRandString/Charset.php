@@ -58,6 +58,8 @@ abstract class Charset {
     *    <li><b>\IntlRandString\Charset::FLAG_UPPER_LETTERS</b> include lower-case letter characters</li>
     *    <li><b>\IntlRandString\Charset::FLAG_UPPER_LETTERS</b> include digit numeral characters</li>
     * </ul>
+    * 
+    * @throws \IntlRandString\InvalidCharsetFlags
     */
    final public function __construct(int $charset_flags=self::FLAG_UPPER_LETTERS | self::FLAG_LOWER_LETTERS | self::FLAG_DIGITS) {
       if ($charset_flags & static::FLAG_UPPER_LETTERS) {
@@ -69,8 +71,9 @@ abstract class Charset {
       if ($charset_flags & static::FLAG_DIGITS) {
          $this->charset = array_merge($this->charset,static::enumDigits());
       }
-      if (!count($this->charset)) {
-         throw new InvalidCharsetFlags;
+      $potentialChars = count($this->charset);
+      if (!$potentialChars) {
+         throw new InvalidCharsetFlags($potentialChars);
       }
    }
 
