@@ -9,7 +9,7 @@ exit((new class () {
    const DEFAULT_CHARSET_NAME = 'English';
    
    const VENDOR_AUTOLOAD = __DIR__.'/../vendor/autoload.php';
-   const BIN_VENDOR_AUTOLOAD = __DIR__.'/../autoload.php';
+   const BIN_VENDOR_AUTOLOAD = __DIR__.'/../../../autoload.php';
    
    const ROOT_NAMESPACE = 'IntlRandString';
    const CHARSET_PARENT_SHORTNAME = 'Charset';
