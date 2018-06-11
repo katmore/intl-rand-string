@@ -9,6 +9,7 @@ exit((new class () {
    const DEFAULT_CHARSET_NAME = 'English';
    
    const VENDOR_AUTOLOAD = __DIR__.'/../vendor/autoload.php';
+   const BIN_VENDOR_AUTOLOAD = __DIR__.'/../autoload.php';
    
    const ROOT_NAMESPACE = 'IntlRandString';
    const CHARSET_PARENT_SHORTNAME = 'Charset';
@@ -84,12 +85,16 @@ ME_HELP;
    
    public function __construct() {
       
-      if (!is_file(static::VENDOR_AUTOLOAD)) {
-         static::printError("missing vendor/autoload.php, hint; have you run composer?");
-         return $this->exitStatus = 1;
+      if (is_file(static::VENDOR_AUTOLOAD)) {
+         require static::VENDOR_AUTOLOAD;
+      } else {
+         if (is_file(static::BIN_VENDOR_AUTOLOAD)) {
+            require static::BIN_VENDOR_AUTOLOAD;
+         } else {
+            static::printError("missing vendor/autoload.php, hint; have you run composer?");
+            return $this->exitStatus = 1;
+         }
       }
-      
-      require static::VENDOR_AUTOLOAD;
       
       $optind = 1;
       getopt("",[],$optind);
