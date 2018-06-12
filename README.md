@@ -2,7 +2,7 @@
 generate internationalized random alpha-numeric strings
 
  * [Usage in a PHP Project](#usage-in-a-php-project)
- * [Standalone Utility](#standalone-utility)
+ * [Standalone Utility](#rand-string-standalone-installation)
  * [Development](#development)
 
 ## About
@@ -123,7 +123,7 @@ make_charset german\
 A standalone utility is provided by the [`bin/rand-string.php`](./bin/rand-string.php) script. Details regarding the usage of this utility and instructions for an optional global installation are included in this section.
 
 ### rand-string standalone installation
-These installation instructions rely on the `make-phar.sh` installer script. See the [*make-phar.sh utility*](#make-pharsh-utility) section for more in-depth usage details and troubleshooting.
+These installation instructions rely on the `make-phar.sh` installer script. See the [*make-phar.sh utility*](#make-pharsh-utility) section for more in-depth details and troubleshooting.
 
 Installation instructions:
  * Download **intl-rand-string** project using git (or similar), and enter the project directory.
@@ -258,7 +258,7 @@ arguments:
 ```
 
 ### make-phar.sh utility
-The [`bin/install/make-phar.sh`](#make-pharsh-usage) installer script can conveniently provision a globally accessible `rand-string` command.
+The [`bin/install/make-phar.sh`](./bin/install/make-phar.sh) utility creates a standalone `rand-string.phar` phar package file using `bin/rand-string.php` as the entrypoint. Optionally, it will copy the phar package to an installation path.
 
 **Prerequisites**
  * composer
