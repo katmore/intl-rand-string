@@ -1,6 +1,11 @@
 # IntlRandString
 generate internationalized random alpha-numeric strings
 
+ * [Usage in a PHP Project](#usage-in-a-php-project)
+ * [Standalone Utility](#standalone-utility)
+ * [Development](#development)
+
+## About
 The **IntlRandString** package facilitates generating random strings in multiple internationalized character sets. A typical use-case is generating random passwords in a targeted "language", i.e. using characters familiar to a language rather than simply using only english latin characters, as is typical. For similar reasons, it could also prove ideal in other use-cases, such as: password reset validation codes, coupon or promotional codes, etc.
 
 ## Usage in a PHP Project
@@ -113,6 +118,169 @@ make_charset german\
    $BASIC_LATIN_LETTERS\
    $CHARSET_LETTERS
 ```
+
+## rand-string utility
+A standalone utility is provided by the [`bin/rand-string.php`](./bin/rand-string.php) script. Details regarding the usage of this utility and instructions for an optional global installation are included in this section.
+
+### rand-string standalone installation
+These installation instructions rely on the `make-phar.sh` installer script. See the [*make-phar.sh utility*](#make-pharsh-utility) section for more in-depth usage details and troubleshooting.
+
+Installation instructions:
+ * Download **intl-rand-string** project using git (or similar), and enter the project directory.
+   ```sh
+   $ git clone git@github.com:katmore/intl-rand-string.git
+   $ cd intl-rand-string
+   ```
+ * Use the `bin/install/make-phar.sh` utility with the `--install` flag to create and install the phar package on your system.
+   ```sh
+   $ bin/install/make-phar.sh --install
+   ```
+
+### rand-string utility examples
+The `rand-string` (or `bin/rand-string.php`) command line utility generates random strings.
+
+Example #1, using default charset and length.
+ * the following command
+   ```sh
+   rand-string
+   ```
+ * should produce output similar to the following
+   ```txt
+   195tTXDob0ol
+   ```
+
+The first positional argument specifies the length of the random string.
+Example #2, using default charset and specifying length:
+ * the following command
+   ```sh
+   rand-string 20
+   ```
+ * should produce output similar to the following
+   ```txt
+   3QCBSV3YC3Dow62Jib5C
+   ```
+
+A charset may be specified for one-time use with the `--charset=<CHARSET-NAME>` flag.
+Example #3, using `cyrillic` charset:
+ * the following command
+   ```sh
+   rand-string --charset=cyrillic
+   ```
+ * should produce output similar to the following
+   ```txt
+   ЯИкМСзГД8уя9
+   ```
+
+The `English` charset is the global default, though this may be changed [(see usage)](#rand-string-utility-usage).
+Example #3, setting the `german` as default:
+ * the following command
+   ```sh
+   rand-string --set-default-charset=german
+   ```
+ * should produce output similar to the following
+   ```txt
+   rand-string: default-charset is now 'german'
+   ```
+ * subsequent executions should produce random strings using the `german` charset, the following command
+   ```sh
+   rand-string
+   ```
+ * should produce output similar to the following
+   ```txt
+   öt7ß1vCQwtNE
+   ```
+
+Any Charset available in [`IntlRandString\Charset`](./src/IntlRandString/Charset) may be used.
+Example #4, getting a list of available charsets:
+ * the following command
+   ```sh
+   rand-string --list
+   ```
+ * should produce output similar to the following
+   ```txt
+   Cyrillic
+   English
+   German
+   Italian
+   Spanish
+   ```
+ * and thus, the following command
+   ```sh
+   rand-string --charset=spanish
+   ```
+ * should produce output similar to the following
+   ```txt
+   rñQ0m1úDkáMV
+   ```
+
+### rand-string utility usage
+```txt
+usage:
+rand-string [-hl|<setting command>] | [--charset=][<char flags...>][<LEN>]
+
+mode flags:
+  -h,--help 
+    Print a help message and exit.
+  -l,--list
+    Print each available charset and exit.
+
+setting commands:
+  --set-default-charset=<CHARSET-NAME>
+    Set the default charset for the current user and exit.
+  --print-default-charset
+    Print the default charset for the current user and exit.
+
+random string options:
+  --charset=<CHARSET-NAME>
+    Optionally specify random string charset.
+
+  char flags:
+    --no-upper-letters
+      Random string will not include upper-case characters.
+    --no-lower-letters
+      Random string will not include lower-case letter characters.
+    --no-digits
+      Random string will not include digit numeral characters.
+    --only-upper-letters
+      Random string will only include upper-case characters.
+      Cannot be used with any other char flag.
+    --only-lower-letters
+      Random string will only include lower-case characters.
+      Cannot be used with any other char flag.
+    --only-digits
+      Random string will only include digit numerical characters.
+      Cannot be used with any other char flag.
+    
+arguments:
+  <LEN>
+    Optionally specify random string length.
+    Default: 12
+```
+
+### make-phar.sh utility
+The [`bin/install/make-phar.sh`](#make-pharsh-usage) installer script can conveniently provision a globally accessible `rand-string` command.
+
+**Prerequisites**
+ * composer
+ * php command line binary
+
+**Usage**
+```txt
+make-phar.sh [-h] | [--install [--install-path=<PATH>]] [<bin path options>]
+options:
+  -h,--help: Print a help message and exit.
+  --install: Optionally install as a global system command.
+  --install-path=<PATH>
+    Optionally specify global system command installation path.
+    Default: /usr/local/bin/rand-string
+
+bin path options:
+  --composer-bin=<COMPOSER-PATH>
+    Optionally specify path to composer.
+  --php-bin=<PHP-PATH>
+    Optionally specify path to php binary.
+```
+
 
 ## Legal
 ### Copyright
