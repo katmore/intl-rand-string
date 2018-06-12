@@ -30,14 +30,20 @@ help_mode() {
    echo "Purpose: creates a standalone 'rand-string.phar' from 'bin/rand-string.php'"
    echo ""
    echo "usage:"
-   echo "  $ME_NAME [-h] [--install [--install-path=<PATH>]]";
+   echo "  $ME_NAME [-h] | [--install [--install-path=<PATH>]] [<bin path options>]"
    echo ""
    echo "options:"
-   echo "  -h: Print a help message and exit."
+   echo "  -h,--help: Print a help message and exit."
    echo "  --install: Optionally install as a global system command."
    echo "  --install-path=<PATH>"
-   echo "    Optionally specify global system command install path."
+   echo "    Optionally specify global system command installation path."
    echo "    Default: $INSTALL_PATH"
+   echo ""
+   echo "bin path options:"
+   echo "  --composer-bin=<COMPOSER-PATH>"
+   echo "    Optionally specify path to composer."
+   echo "  --php-bin=<PHP-PATH>"
+   echo "    Optionally specify path to php binary."
    exit 0
 }
 
@@ -46,13 +52,21 @@ help_mode() {
 #
 OPTION_STATUS=0
 INSTALL_MODE=0
+COMPOSER_BIN=composer
+PHP_BIN=php
+ROOT_OK=0
 while getopts :?hu-: arg; do { case $arg in
    h|u|a|v) help_mode;; 
    -) LONG_OPTARG="${OPTARG#*=}"; case $OPTARG in
       help|usage|version) help_mode;;
       install) INSTALL_MODE=1;;
+      root-ok) ROOT_OK=1;;
       install-path) >&2 echo "$ME_NAME: option --$OPTARG must have a value"; OPTION_STATUS=2;;
       install-path=*) INSTALL_PATH=$LONG_OPTARG;;
+      composer-bin) >&2 echo "$ME_NAME: option --$OPTARG must have a value"; OPTION_STATUS=2;;
+      composer-bin=*) COMPOSER_BIN=$LONG_OPTARG;;
+      php-bin) >&2 echo "$ME_NAME: option --$OPTARG must have a value"; OPTION_STATUS=2;;
+      php-bin=*) PHP_BIN=$LONG_OPTARG;;
       *) >&2 echo "$ME_NAME: unrecognized long option --$OPTARG"; OPTION_STATUS=2;;
    esac ;; 
    *) >&2 echo "$ME_NAME: unrecognized option -$OPTARG"; OPTION_STATUS=2;;
@@ -62,17 +76,25 @@ shift $((OPTIND-1)) # remove parsed options and args from $@ list
 [ -z "$@" ] || { >&2 echo "$ME_NAME: one or more unrecognized positional arguments"; exit 2; }
 
 #
+# enforce not superuser
+#
+if ( [ `id -u` = 0 ] && [ "$ROOT_OK" != "1" ] ); then
+  >&2 echo "$ME_NAME: this script should not be used with root (or superuser) permissions. Use the --root-ok flag to unwisely bypass this check."
+  exit 1
+fi
+
+#
 # enforce composer sanity
 #
-composer -V > /dev/null 2>&1 || {
-   >&2 echo "$ME_NAME: composer is unavailable; have you installed composer?"
+$COMPOSER_BIN -V > /dev/null 2>&1 || {
+   >&2 echo "$ME_NAME: $COMPOSER_CMD command is unavailable"
    exit 1
 }
 
 #
 # enforce php sanity
 #
-php -v > /dev/null 2>&1 || {
+$PHP_BIN -v > /dev/null 2>&1 || {
    >&2 echo "$ME_NAME: php is unavailable; have you installed php?"
    exit 1
 }
@@ -90,7 +112,7 @@ INSTALL_DIR=$(dirname $INSTALL_PATH)
 # globally install 'phar-builder'
 #
 PACKAGE=macfja/phar-builder
-composer global require $PACKAGE || {
+$COMPOSER_BIN global require $PACKAGE || {
    >&2 echo "$ME_NAME: composer failed to globally install '$PACKAGE' package"
    exit 1
 }
@@ -98,7 +120,7 @@ composer global require $PACKAGE || {
 #
 # global composer vendor dir
 #
-GLOBAL_VENDOR_DIR=$(composer global config vendor-dir --absolute 2>/dev/null) || {
+GLOBAL_VENDOR_DIR=$($COMPOSER_BIN global config vendor-dir --absolute 2>/dev/null) || {
    >&2 echo "$ME_NAME: unable to get the composer global vendor-dir, 'composer global config vendor-dir' failed with exit status $?"
    exit 1
 }
@@ -132,7 +154,7 @@ cd $TMP_BUILD_DIR || {
 #
 # composer update for 'intl-rand-string' package
 #
-composer update --no-dev || {
+$COMPOSER_BIN update --no-dev || {
    >&2 echo "$ME_NAME: 'composer update --no-dev' failed with exit status $?"
    exit 1
 }
@@ -147,7 +169,7 @@ PHAR_PATH=$TMP_BUILD_DIR/$PHAR_NAME
 #
 # create rand-string.phar
 #
-php -d phar.readonly=0 "$GLOBAL_VENDOR_DIR/bin/phar-builder" package -n -z --include=vendor --include=src --entry-point="$ENTRY_POINT" --output-dir=$TMP_BUILD_DIR --name="$PHAR_NAME" || {
+$PHP_BIN -d phar.readonly=0 "$GLOBAL_VENDOR_DIR/bin/phar-builder" package -n -z --include=vendor --include=src --entry-point="$ENTRY_POINT" --output-dir=$TMP_BUILD_DIR --name="$PHAR_NAME" || {
    >&2 echo "$ME_NAME: phar-builder failed with exit status $?"
    exit 1
 }

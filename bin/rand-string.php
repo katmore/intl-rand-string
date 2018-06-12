@@ -5,7 +5,7 @@ use IntlRandString\InvalidCharsetFlags;
 
 exit((new class () {
    
-   const FALLBACK_LENGTH = 12;
+   const DEFAULT_LENGTH = 12;
    const FALLBACK_CHARSET_NAME = 'English';
    
    const VENDOR_AUTOLOAD = __DIR__.'/../vendor/autoload.php';
@@ -59,7 +59,7 @@ random string options:
 arguments:
   <LEN>
     Optionally specify random string length.
-    Default: %FALLBACK_LENGTH%
+    Default: %DEFAULT_LENGTH%
 ME_HELP;
    
    const ME_COPYRIGHT = 'Copyright (c) 2012-2018 Doug Bird. All Rights Reserved.';
@@ -71,7 +71,7 @@ ME_HELP;
       static::printUsage();
       static::printLine("");
       $help = static::ME_HELP;
-      $help = str_replace("%FALLBACK_LENGTH%", static::FALLBACK_LENGTH, $help);
+      $help = str_replace("%DEFAULT_LENGTH%", static::DEFAULT_LENGTH, $help);
       echo str_replace("\n",PHP_EOL,$help).PHP_EOL;
    }
    
@@ -251,16 +251,16 @@ ME_HELP;
        */
       $unrecognizedOption = false;
       if (!empty($_SERVER) && !empty($_SERVER['argv'])) {
-         $allowedShortOpt = "hua";
+         $allowedShortOpt = "hual";
          $allowedLongOpt = [
             'help','usage','about',
             'list','list-charsets','list-charset',
             'charset',
             'no-upper-letters','no-lower-letters','no-digits',
             'only-upper-letters','only-lower-letters','only-digits',
-            'set-default-charset',
+            'set-default-charset','print-default-charset'
          ];
-         $allowedValueOpt = $requiredValueOpt = ['charset'];
+         $allowedValueOpt = $requiredValueOpt = ['charset','set-default-charset'];
          $foundOptVal = [];
          foreach($requiredValueOpt as $longOptName) {
             $optf = getopt("",[$longOptName]);
@@ -318,15 +318,6 @@ ME_HELP;
                         }
                      }
                      
-                  }
-               }
-            }
-            if ($longOptName!==null) {
-               $optv = getopt("",["$longOptName:"]);
-               if (!empty($optv)) {
-                  if (isset($optv[$longOptName]) && !in_array($longOptName,$allowedValueOpt)) {
-                     $unrecognizedOption = true;
-                     static::printError("option --$longOptName cannot have a value");
                   }
                }
             }
@@ -443,10 +434,8 @@ ME_HELP;
          $charsetName = $charsetOpt['charset'];
       }
       
-      
-      
       if ($length===null) {
-         $length = static::FALLBACK_LENGTH;
+         $length = static::DEFAULT_LENGTH;
       } else {
          if (!ctype_digit($length)) {
             $invalidArg = true;
