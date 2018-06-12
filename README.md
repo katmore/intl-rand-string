@@ -142,7 +142,7 @@ The `rand-string` (or `bin/rand-string.php`) command line utility generates rand
 Example #1, using default charset and length.
  * the following command
    ```sh
-   rand-string
+   $ rand-string
    ```
  * should produce output similar to the following
    ```txt
@@ -154,7 +154,7 @@ The first positional argument specifies the length of the random string.
 Example #2, using default charset and specifying length:
  * the following command
    ```sh
-   rand-string 20
+   $ rand-string 20
    ```
  * should produce output similar to the following
    ```txt
@@ -166,7 +166,7 @@ A charset may be specified for one-time use with the `--charset=<CHARSET-NAME>` 
 Example #3, using `cyrillic` charset:
  * the following command
    ```sh
-   rand-string --charset=cyrillic
+   $ rand-string --charset=cyrillic
    ```
  * should produce output similar to the following
    ```txt
@@ -178,15 +178,15 @@ The `English` charset is the global default, though this may be changed [(see us
 Example #3, setting the `german` as default:
  * the following command
    ```sh
-   rand-string --set-default-charset=german
+   $ rand-string --set-default-charset=german
    ```
  * should produce output similar to the following
    ```txt
-   rand-string: default-charset is now 'german'
+   $ rand-string: default-charset is now 'german'
    ```
  * subsequent executions should produce random strings using the `german` charset, the following command
    ```sh
-   rand-string
+   $ rand-string
    ```
  * should produce output similar to the following
    ```txt
@@ -198,7 +198,7 @@ Any Charset available in [`IntlRandString\Charset`](./src/IntlRandString/Charset
 Example #4, getting a list of available charsets:
  * the following command
    ```sh
-   rand-string --list
+   $ rand-string --list
    ```
  * should produce output similar to the following
    ```txt
@@ -210,7 +210,7 @@ Example #4, getting a list of available charsets:
    ```
  * and thus, the following command
    ```sh
-   rand-string --charset=spanish
+   $ rand-string --charset=Spanish
    ```
  * should produce output similar to the following
    ```txt
